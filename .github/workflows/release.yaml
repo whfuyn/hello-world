@@ -30,7 +30,7 @@ jobs:
         run: |
           cargo build --release --target ${{ matrix.target }}
           mkdir staging
-          cp target/${{ matrix.target }}/hello-world staging/hello-world-${{ matrix.target }}
+          cp target/${{ matrix.target }}/release/hello-world staging/hello-world-${{ matrix.target }}
           zip hello-world-${{ matrix.target }}.zip staging/hello-world-${{ matrix.target }}
       
       - name: Upload release
