@@ -1,0 +1,40 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.*'
+
+jobs:
+  publish-release:
+    name: Publish Release
+    runs-on: ubuntu-latest
+    matrix:
+      target: ["x86_64-unknown-linux-gnu", "aarch64-apple-darwin"]
+    steps:
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          components: rustfmt, clippy
+
+      - name: Add rust target
+        run: rustup target add ${{ matrix.target }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build release binary
+        run: |
+          cargo build --release --target ${{ matrix.target }}
+          mkdir staging
+          cp target/${{ matrix.target }}/hello-world staging/hello-world-${{ matrix.target }}
+          zip hello-world-${{ matrix.target }}.zip staging/hello-world-${{ matrix.target }}
+      
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: staging/hello-world-${{ matrix.target }}.zip
+      
