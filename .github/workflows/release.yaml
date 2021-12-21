@@ -1,13 +1,13 @@
 name: release
-
 on:
   push:
     tags:
       - 'v[0-9]+.*'
-
 jobs:
   publish-release:
     name: Publish Release
+    env:
+      BINARY_NAME: hello-world
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,23 +18,24 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
+          target: ${{ matrix.target }}
           components: rustfmt, clippy
-
-      - name: Add rust target
-        run: rustup target add ${{ matrix.target }}
 
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Build release binary
-        run: |
-          cargo build --release --target ${{ matrix.target }}
-          mkdir staging
-          cp target/${{ matrix.target }}/release/hello-world staging/hello-world-${{ matrix.target }}
-          zip hello-world-${{ matrix.target }}.zip staging/hello-world-${{ matrix.target }}
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --release --target ${{ matrix.target }}
+
+      - name: Zip binary
+        run: 
+          zip $BINARY_NAME-${{ matrix.target }}.zip target/${{ matrix.target }}/release/$BINARY_NAME
       
       - name: Upload release
         uses: softprops/action-gh-release@v1
         with:
-          files: staging/hello-world-${{ matrix.target }}.zip
-      
+          files: $BINARY_NAME-${{ matrix.target }}.zip
