@@ -21,18 +21,14 @@ jobs:
           target: ${{ matrix.target }}
           components: rustfmt, clippy
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v2
       - name: Build release binary
         uses: actions-rs/cargo@v1
         with:
           use-cross: true
           command: build
           args: --release --target ${{ matrix.target }}
-
-      - name: Zip binary
-        run: 
+      - run: 
           zip ${{ env.BINARY_NAME }}-${{ matrix.target }}.zip target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}
       
       - name: Upload release
