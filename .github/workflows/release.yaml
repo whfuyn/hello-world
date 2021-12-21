@@ -29,7 +29,7 @@ jobs:
           command: build
           args: --release --target ${{ matrix.target }}
       - run: 
-          zip ${{ env.BINARY_NAME }}-${{ matrix.target }}.zip target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}
+          zip -j ${{ env.BINARY_NAME }}-${{ matrix.target }}.zip target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}
       
       - name: Upload release
         uses: softprops/action-gh-release@v1
