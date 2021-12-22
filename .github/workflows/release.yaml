@@ -51,7 +51,7 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            7z a ${{ env.BINARY_NAME }}-${{ matrix.target }}.zip $PWD/target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}
+            7z a ${{ env.BINARY_NAME }}-${{ matrix.target }}.zip $PWD/target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}.exe
           else
             tar czf ${{ env.BINARY_NAME }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.BINARY_NAME }}
           fi
