@@ -37,7 +37,9 @@ jobs:
           target: ${{ matrix.target }}
           components: rustfmt, clippy
 
-      - uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
       - name: Build release binary
         uses: actions-rs/cargo@v1
         with:
@@ -45,14 +47,17 @@ jobs:
           command: build
           args: --release --target ${{ matrix.target }}
 
-      - if: matrix.build == "linux" || matrix.build == "linux-musl"
-        run: 
-            tar czf ${{ env.BINARY_NAME }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.BINARY_NAME }}
-      - if: matrix.build != "linux" && matrix.build != "linux-musl"
-        run: 
-            zip -j ${{ env.BINARY_NAME }}-${{ matrix.target }}.zip target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}
+      - name: Build archive
+        shell: bash
+        run: |
+            if [ "${{ matrix.build }}" == "win-msvc" ]; then
+              zip -j ${{ env.BINARY_NAME }}-${{ matrix.target }}.zip target/${{ matrix.target }}/release/${{ env.BINARY_NAME }}
+            else
+              tar czf ${{ env.BINARY_NAME }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.BINARY_NAME }}
       
-      - name: Upload release
+      - name: Upload release archive
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ env.BINARY_NAME }}-${{ matrix.target }}.zip
+          files: |
+            ${{ env.BINARY_NAME }}-${{ matrix.target }}.zip
+            ${{ env.BINARY_NAME }}-${{ matrix.target }}.tar.gz
