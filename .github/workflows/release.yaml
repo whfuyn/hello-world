@@ -1,8 +1,10 @@
 name: release
 on:
   push:
-    tags:
-      - 'v[0-9]+.*'
+    tags: "v[0-9]+.[0-9]+.[0-9]+*"
+env:
+  RUSTFLAGS: -Dwarnings
+  RUST_BACKTRACE: 1
 jobs:
   publish-release:
     name: Publish Release
@@ -34,6 +36,7 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
+          override: true
           target: ${{ matrix.target }}
           components: rustfmt, clippy
 
