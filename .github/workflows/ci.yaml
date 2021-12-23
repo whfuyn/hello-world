@@ -88,3 +88,16 @@ jobs:
         with:
           command: build
           args: --all-targets
+
+  ci-success:
+    name: ci
+    if: ${{ success() }}
+    needs:
+      - rustfmt
+      - clippy
+      - test
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: CI succeeded
+        run: exit 0
