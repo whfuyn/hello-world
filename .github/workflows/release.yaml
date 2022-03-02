@@ -39,11 +39,12 @@ jobs:
             os: macos-latest
             target: aarch64-apple-darwin
     steps:
-      - shell:  bash
-        run: |
-          if [ "${{matrix.build}}" == "linux-musl" ] || [ "${{matrix.build}}" == "linux-musl-arm" ]; then
-            sudo apt-get install musl-tools
-          fi
+      # - name: Install dependencies for musl builds
+      #   shell: bash
+      #   run: |
+      #     if [ "${{matrix.build}}" == "linux-musl" ] || [ "${{matrix.build}}" == "linux-musl-arm" ]; then
+      #       sudo apt-get install musl-tools
+      #     fi
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
